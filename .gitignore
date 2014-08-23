@@ -1,5 +1,6 @@
 .bundle/install.log
 .gems
+.tmp
 bin
 node_modules
 app/bower_components
