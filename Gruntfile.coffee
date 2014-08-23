@@ -322,11 +322,6 @@ module.exports = (grunt) ->
             "*.html"
             "images/**/*.{gif,jpg,jpeg,png,svg,webp}"
             "fonts/**/*.{eot*,otf,svg,ttf,woff}"
-            "bower_components/ttm-icons/*.{eot*,ttf,woff}"
-            "bower_components/ttm-logos/*.{png,svg}"
-            "bower_components/ttm-vendor-fonts/**/*.{eot*,otf,svg,ttf,woff}"
-            "bower_components/javascript-calculator/dist/fonts/*"
-            "bower_components/mediaelement/build/**/*.{png,svg}"
           ]
           dest: "<%= yeoman.dist %>"
         },
@@ -425,10 +420,6 @@ module.exports = (grunt) ->
         "exec:bower"
       ]
 
-  # Custom Grunt tasks
-  grunt.registerTask 'data', 'Copy a specific student-info JSON file to .tmp.', (target) ->
-    grunt.task.run ["copy:fakeData:#{target}"]
-
   grunt.registerTask "serve", "Run a local development server, or preview the built app", (target) ->
     target ||= "mc-guidedlearning"
 
@@ -452,22 +443,8 @@ module.exports = (grunt) ->
         "autoprefixer:dist"
         "handlebars:dist"
         "configureRewriteRules"
-        "cdn:html"
-        "cdn:css"
         "copy:config:local"
       ]
-
-      if target == "no-watch"
-        tasks = tasks.concat [
-          "data:mc-guidedlearning"
-          "connect:noreload:keepalive"
-        ]
-      else
-        tasks = tasks.concat [
-          "data:#{target}"
-          "connect:livereload"
-          "watch"
-        ]
 
     grunt.task.run tasks
 
@@ -495,8 +472,6 @@ module.exports = (grunt) ->
       "htmlmin"
     ]
 
-    if target is "local"
-      tasks.push "copy:fakeDataDist"
     grunt.task.run tasks
 
   grunt.registerTask "test", "Unit and CI integration tests", (target) ->
