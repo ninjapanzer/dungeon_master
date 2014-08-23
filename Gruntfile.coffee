@@ -53,28 +53,6 @@ module.exports = (grunt) ->
         port: 9000
         livereload: 35729
         hostname: "0.0.0.0"
-        middleware: (connect, options) ->
-          middlewares = [rewriteRulesMiddleware]
-          middlewares.push connect.bodyParser()
-          middlewares.push (req, res, next) ->
-            return next() unless req and req.body
-            return next() unless delayMiddleware(req)
-            setTimeout (-> next()), 4000
-
-          middlewares = middlewares.concat middlewareBuilder
-            "^/api/lessons/.*$": lessonContent
-            "^/api/attempt": attemptMiddleware
-            "^/api/pre_quiz_activity_declination": "app/fake_data/pre-quiz-decline.json"
-            "^/api/hint_views": "app/fake_data/help-views.json"
-            "^/api/item$": "app/fake_data/placement-test-item.json"
-            "^/api/student_info$": ".tmp/fake_data/student-info.json"
-
-          for path in options.base
-            connectStatic = connect.static(require("path").resolve(path))
-            middlewares.push connectStatic
-
-          middlewares
-
         base: [
           ".tmp"
           "<%= yeoman.app %>"
@@ -82,7 +60,7 @@ module.exports = (grunt) ->
 
       # Server rewrite rules from grunt-connect-rewrite
       rules:
-        "^/lesson_player(.*)$": "/$1"
+        "^/dungeon_master(.*)$": "/$1"
 
       livereload:
         options: {}
@@ -292,19 +270,6 @@ module.exports = (grunt) ->
     # or url
     # TODO: Add compiled js to task
     # TODO: Add target for build
-    cdn:
-      options:
-        cdn: "/lesson_player/"
-
-      # HTML and CSS targets are split for efficient LiveReload
-      html:
-        src: [".tmp/*.html"]
-
-      css:
-        src: [".tmp/**/*.css", "!.tmp/bower_components/**/*.css"]
-
-      dist:
-        src: ["<%= yeoman.dist %>/*.html", "<%= yeoman.dist %>/**/*.css"]
 
     # Rev prefixes files with a hash for cachebusting
     rev:
@@ -335,27 +300,6 @@ module.exports = (grunt) ->
         files: [
           src: "app/scripts/vendor/modernizr-production.js"
           dest: ".tmp/scripts/vendor/modernizr.js"
-        ]
-
-      fakeData:
-        files: [
-          src:  "app/fake_data/student-info-<%= grunt.task.current.args[0].replace(/_/,'-') %>.json"
-          dest: ".tmp/fake_data/student-info.json"
-        ]
-
-      fakeDataDist:
-        files: [
-          expand: true
-          dot: true
-          cwd: '<%= yeoman.app %>/fake_data'
-          src: [
-            '**/*.json'
-            '!**/student-info-*.json'
-          ]
-          dest: '<%= yeoman.dist %>/fake_data'
-        ,
-          src: '<%= yeoman.app %>/fake_data/student-info-mc-guidedlearning.json'
-          dest: '.tmp/fake_data/student-info.json'
         ]
 
       coffee:
